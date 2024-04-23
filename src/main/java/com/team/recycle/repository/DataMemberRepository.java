@@ -1,14 +1,15 @@
-package com.recycle.repository;
+package com.team.recycle.repository;
 
-import com.recycle.domain.MemberDAO;
-import com.recycle.domain.UserDAO;
+import com.team.recycle.domain.Game;
+import com.team.recycle.domain.MemberDTO;
+import com.team.recycle.domain.UserDAO;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataMemberRepository implements MemberRepository{
+public class DataMemberRepository implements MemberRepository {
 
     private final DataSource dataSource;
 
@@ -17,10 +18,35 @@ public class DataMemberRepository implements MemberRepository{
     }
 
     @Override
-    public void save(MemberDAO memberDAO) {
+    public long sequenceNext() {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+
+        try {
+            conn = dataSource.getConnection();
+            String sql = "SELECT id_seq.nextval FROM dual";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            int nextId = 0;
+            if (rs.next()) {
+                nextId = rs.getInt(1);
+            }
+            return nextId;
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
+    @Override
+    public void save(MemberDTO memberDAO) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        long nextId = sequenceNext();
 
         try {
             // 데이터베이스 연결을 위한 DataSource를 사용하여 Connection을 가져옴
@@ -29,16 +55,50 @@ public class DataMemberRepository implements MemberRepository{
             String sql = "INSERT INTO Member (id, email, password, joinDate) VALUES (?, ?, ?, ?)";
 
             pstmt = conn.prepareStatement(sql);
-
-            // 이거는 회원가입에서 받은 정보로 할거임
-            pstmt.setInt(1, 1);
+            pstmt.setLong(1, nextId);
             pstmt.setString(2, memberDAO.getEmail());
             pstmt.setString(3, memberDAO.getPassword());
             pstmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
 
+            sql = "INSERT INTO game (id, game_score) VALUES (?, ?)";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, nextId);
+            pstmt.setInt(2, 0);
+
             // 쿼리 실행
             pstmt.executeUpdate();
 
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
+
+
+    //
+    @Override
+    public int scoreUp(long id) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        UserDAO ud = getUserInfo(id);
+
+        try {
+            conn = dataSource.getConnection();
+
+            String sql = "update game set game_score = ? where id = ?";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, ud.getGameScore()+1);
+            pstmt.setLong(2, id);
+
+            // 쿼리 실행
+            pstmt.executeUpdate();
+
+            return 0;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         } finally {
