@@ -1,8 +1,8 @@
 package com.recycle.repository;
 
-import com.team.recycle.domain.Game;
-import com.team.recycle.domain.MemberDTO;
-import com.team.recycle.domain.UserDAO;
+import com.recycle.domain.Game;
+import com.recycle.domain.MemberDTO;
+import com.recycle.domain.UserDAO;
 
 import javax.sql.DataSource;
 import java.sql.*;
