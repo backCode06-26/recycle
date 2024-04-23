@@ -1,4 +1,4 @@
-package com.team.recycle.repository;
+package com.recycle.repository;
 
 import com.team.recycle.domain.Game;
 import com.team.recycle.domain.MemberDTO;
