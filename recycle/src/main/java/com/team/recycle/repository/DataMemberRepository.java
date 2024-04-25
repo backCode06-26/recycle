@@ -44,7 +44,7 @@ public class DataMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void save(MemberDTO memberDAO) {
+    public void save(Member member) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -59,8 +59,8 @@ public class DataMemberRepository implements MemberRepository {
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, nextId);
-            pstmt.setString(2, memberDAO.getEmail());
-            pstmt.setString(3, memberDAO.getPassword());
+            pstmt.setString(2, member.getEmail());
+            pstmt.setString(3, member.getPassword());
             pstmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
 
             sql = "INSERT INTO game (id, game_score) VALUES (?, ?)";

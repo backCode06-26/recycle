@@ -1,8 +1,6 @@
 package com.team.recycle.repository;
 
-import com.team.recycle.domain.Game;
 import com.team.recycle.domain.Member;
-import com.team.recycle.domain.MemberDTO;
 import com.team.recycle.domain.UserDAO;
 
 import java.util.List;
@@ -13,7 +11,7 @@ public interface MemberRepository {
     long sequenceNext();
 
     // 사용자 정보 저장하기
-    void save(MemberDTO memberDAO);
+    void save(Member member);
 
     // 점수 업
     int scoreUp(String email);
