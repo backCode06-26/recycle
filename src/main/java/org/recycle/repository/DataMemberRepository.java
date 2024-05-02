@@ -41,7 +41,7 @@ public class DataMemberRepository implements MemberRepository {
             // 데이터베이스 연결을 위한 DataSource를 사용하여 Connection을 가져옴
             conn = dataSource.getConnection();
 
-            // MEMBER 테이블에 멤버 정보를 삽입하기 전에 ID 값을 가져옴
+            // MEMBER_SEQ_ID 시퀀스에서 다음 값을 가져옴
             String sqlGetId = "SELECT MEMBER_SEQ.NEXTVAL FROM DUAL";
             pstmt = conn.prepareStatement(sqlGetId);
             rs = pstmt.executeQuery();
@@ -57,7 +57,7 @@ public class DataMemberRepository implements MemberRepository {
             member.setId(generatedId);
 
             // MEMBER 테이블에 멤버 정보를 삽입
-            String sqlInsertMember = "INSERT INTO MEMBER (id, email, password, joinDate) VALUES (?, ?, ?, ?)";
+            String sqlInsertMember = "INSERT INTO MEMBER (id, email, password, join_date) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(sqlInsertMember);
             pstmt.setLong(1, member.getId());
             pstmt.setString(2, member.getEmail());
@@ -67,6 +67,7 @@ public class DataMemberRepository implements MemberRepository {
 
             // GAME 테이블에도 데이터 추가
             String sqlInsertGame = "INSERT INTO GAME (id, game_score) VALUES (?, ?)";
+            pstmt.close(); // 이전 PreparedStatement 닫기
             pstmt = conn.prepareStatement(sqlInsertGame);
             pstmt.setLong(1, member.getId()); // 앞서 생성된 멤버의 ID를 사용
             pstmt.setInt(2, 0);
@@ -79,6 +80,35 @@ public class DataMemberRepository implements MemberRepository {
         }
     }
 
+    @Override
+    public Member findByEmail(String email) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dataSource.getConnection();
+
+            Member member = new Member();
+            String sql = "select * from MEMBER where email = ?";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, email);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                member.setId(rs.getLong("id"));
+                member.setEmail(rs.getString("email"));
+                member.setPassword(rs.getString("password"));
+                member.setJoinDate(rs.getTimestamp("join_date"));
+            }
+            return member;
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            close(conn, pstmt, rs);
+        }
+    }
 
 
     //
@@ -104,36 +134,6 @@ public class DataMemberRepository implements MemberRepository {
 
             return 0;
         } catch (Exception e) {
-            throw new IllegalStateException(e);
-        } finally {
-            close(conn, pstmt, rs);
-        }
-    }
-
-    @Override
-    public Member findByEmail(String email) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = dataSource.getConnection();
-
-            Member member = new Member();
-            String sql = "select * from Member where email = ?";
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, email);
-
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                member.setId(rs.getLong("id"));
-                member.setEmail(rs.getString("email"));
-                member.setPassword(rs.getString("password"));
-                member.setJoinDate(rs.getTimestamp("joinDate"));
-            }
-            return member;
-        } catch (SQLException e) {
             throw new IllegalStateException(e);
         } finally {
             close(conn, pstmt, rs);
