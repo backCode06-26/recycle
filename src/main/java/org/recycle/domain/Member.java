@@ -1,5 +1,7 @@
 package org.recycle.domain;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.sql.Timestamp;

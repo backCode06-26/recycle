@@ -27,14 +27,15 @@ public class MemberService {
     // 이미 존재하는 데이터인지 채크
     public void checkDuplicateMember(Member member) {
         Member findMember = dataMemberRepository.findByEmail(member.getEmail());
-        if (findMember != null) {
+        if (findMember != null && findMember.getId() != null) {
             throw new IllegalStateException("이미 가입된 회원입니다.");
         }
     }
 
-    public void checkMember(Member member) {
+    // 로그인 채크
+    public void loginCheckMember(Member member) {
         Member findMember = dataMemberRepository.findByEmail(member.getEmail());
-        if (findMember == null) {
+        if (findMember != null && findMember.getId() != null) {
             throw new IllegalStateException("가입이 되지 않은 회원입니다.");
         }
     }

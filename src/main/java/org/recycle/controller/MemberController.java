@@ -30,7 +30,7 @@ public class MemberController {
             memberService.join(member);
         } catch (Exception e) {
             String errorMessage = e.getMessage();
-            model.addAttribute("errorMessage", errorMessage);
+            System.out.println(errorMessage);
             return "members/signup"; // 회원가입 페이지로 다시 이동
         }
         return "redirect:/"; // 회원가입 후 메인 페이지로 리다이렉트
@@ -48,11 +48,11 @@ public class MemberController {
             Member member = new Member();
             member.setEmail(memberDTO.getEmail());
             member.setPassword(memberDTO.getPassword());
-            memberService.checkMember(member);
+            memberService.loginCheckMember(member);
         } catch (IllegalStateException e) {
             // 예외 처리 - 가입되지 않은 회원일 경우
             String errorMessage = e.getMessage();
-            model.addAttribute("errorMessage", errorMessage);
+            System.out.println(errorMessage);
             return "members/login"; // 로그인 페이지로 다시 이동
         }
         return "redirect:/"; // 로그인 성공 시 메인 페이지로 리다이렉트
