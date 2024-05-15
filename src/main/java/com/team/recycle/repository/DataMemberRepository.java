@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +62,6 @@ public class DataMemberRepository implements MemberRepository {
         }
     }
 
-
-
-
     // 게임 점수 올리기
     @Override
     public int scoreUp(String email) {
@@ -99,27 +99,28 @@ public class DataMemberRepository implements MemberRepository {
 
         try {
             conn = dataSource.getConnection();
-
-            Member member = new Member();
-            String sql = "select * from member where email = ?";
+            String sql = "SELECT * FROM member WHERE email = ?";
             pstmt = conn.prepareStatement(sql);
-
             pstmt.setString(1, email);
 
             rs = pstmt.executeQuery();
             if (rs.next()) {
+                Member member = new Member();
                 member.setId(rs.getLong("id"));
                 member.setEmail(rs.getString("email"));
                 member.setPassword(rs.getString("password"));
-                member.setJoinDate(rs.getTimestamp("join_date"));
+//                member.setJoinDate(rs.getTimestamp("join_date"));
+                return member;
             }
-            return member;
+            return null;
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         } finally {
             close(conn, pstmt, rs);
         }
     }
+
+
 
     @Override
     public UserDAO getUserInfo(String email) {
@@ -130,7 +131,7 @@ public class DataMemberRepository implements MemberRepository {
         try {
             conn = dataSource.getConnection();
 
-            String sql = "SELECT M.email, M.join_date, G.game_score " +
+            String sql = "SELECT M.email, G.game_score " +
                     "FROM member M INNER JOIN game G ON M.id = G.id " +
                     "WHERE M.email = ?";
 
@@ -142,7 +143,6 @@ public class DataMemberRepository implements MemberRepository {
             if (rs.next()) {
                 UserDAO mg = new UserDAO();
                 mg.setEmail(rs.getString("email"));
-                mg.setJoinDate(rs.getTimestamp("join_date"));
                 mg.setGameScore(rs.getInt("game_score"));
                 return mg;
             } else {
@@ -168,7 +168,7 @@ public class DataMemberRepository implements MemberRepository {
 
             // 페이징을 적용한 SQL 쿼리
             String sql = "SELECT * FROM ( " +
-                    "    SELECT M.email, M.join_date, M.game_score, ROWNUM AS row_num " +
+                    "    SELECT M.email, M.game_score, ROWNUM AS row_num " +
                     "    FROM (SELECT M.email, M.join_date, G.game_score " +
                     "          FROM member M INNER JOIN game G ON M.id = G.id) M " +
                     "    WHERE ROWNUM <= ?" +
@@ -183,7 +183,6 @@ public class DataMemberRepository implements MemberRepository {
             while (rs.next()) {
                 UserDAO mg = new UserDAO();
                 mg.setEmail(rs.getString("email"));
-                mg.setJoinDate(rs.getTimestamp("join_date"));
                 mg.setGameScore(rs.getInt("game_score"));
                 memberGameInfos.add(mg);
             }

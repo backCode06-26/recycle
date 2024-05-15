@@ -20,12 +20,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/members/login", "/members/join").permitAll()
+                        .requestMatchers("/", "/members/login", "/members/join", "/members/userInfo").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((auth) -> auth
                         .loginPage("/members/login")
-                        .loginProcessingUrl("/members/login")
+                        .usernameParameter("email")
+                        .loginProcessingUrl("/login")
                         .permitAll()
                 )
                 .csrf((csrf) -> csrf.disable());

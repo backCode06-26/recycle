@@ -46,26 +46,27 @@ public class MemberController {
         }
         return "redirect:/";
     }
-
+    
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         return "members/login";
     }
-
-    @GetMapping("/userInfo")
-    public String getUserInfo(Model model) {
-        List<UserDAO> userDAOList = memberService.getUserDAOList(1, 10);
-        model.addAttribute("userDAOList", userDAOList);
-        return "members/userInfo";
-    }
-
+    
+    // 개인 정보 불러오기
     @GetMapping("/user")
     public String getUser(Model model) {
+
+        // email session
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        model.addAttribute("email", email);
-
         return "members/user";
+    }
+    
+    @GetMapping("/userInfo")
+    public String getUserInfo(Model model) {
+        List<UserDAO> userDAOList = memberService.getUserList(1, 10);
+        model.addAttribute("userDAOList", userDAOList);
+        return "members/userInfo";
     }
 
 }

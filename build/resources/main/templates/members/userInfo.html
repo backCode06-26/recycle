@@ -6,18 +6,16 @@
 </head>
 <body>
 <h1>User Information</h1>
-<table>
+<table border="1">
     <thead>
     <tr>
         <th>Email</th>
-        <th>Join Date</th>
         <th>Game Score</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="userDAO : ${userDAOList}">
         <td th:text="${userDAO.email}"></td>
-        <td th:text="${userDAO.joinDate}"></td>
         <td th:text="${userDAO.gameScore}"></td>
     </tr>
     </tbody>
