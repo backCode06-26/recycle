@@ -12,4 +12,5 @@ public class Member {
     private String email;
     private String password;
     private Timestamp joinDate;
+    private String role;
 }

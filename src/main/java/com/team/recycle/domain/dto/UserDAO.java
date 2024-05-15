@@ -1,4 +1,4 @@
-package com.team.recycle.domain;
+package com.team.recycle.domain.dto;
 
 import lombok.Data;
 

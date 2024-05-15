@@ -1,7 +1,7 @@
 package com.team.recycle.repository;
 
 import com.team.recycle.domain.Member;
-import com.team.recycle.domain.UserDAO;
+import com.team.recycle.domain.dto.UserDAO;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;

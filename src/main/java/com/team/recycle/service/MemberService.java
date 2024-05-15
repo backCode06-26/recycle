@@ -1,8 +1,7 @@
 package com.team.recycle.service;
 
 import com.team.recycle.domain.Member;
-import com.team.recycle.domain.MemberDTO;
-import com.team.recycle.domain.UserDAO;
+import com.team.recycle.domain.dto.UserDAO;
 import com.team.recycle.repository.DataMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
