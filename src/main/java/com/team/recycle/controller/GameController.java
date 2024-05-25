@@ -19,11 +19,29 @@ public class GameController {
 
         // email session
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        memberService.increaseScore(email);
 
         return "redirect:/";
     }
 
     // gameMain 페이지 들어가기
+    @GetMapping("/gameMain")
+    public String gameMain() {
+
+        return "games/gameMain.html";
+    }
+
     // game1 페이지 들어가기
+    @GetMapping("/game1")
+    public String game1() {
+
+        return "games/game1.html";
+    }
+
     // game2 페이지 들어가기
+    @GetMapping("/game2")
+    public String game2() {
+
+        return "games/game2.html";
+    }
 }
