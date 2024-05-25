@@ -58,7 +58,8 @@ public class MemberController {
 
         // email session
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
+        UserDAO userDAO = memberService.getUser(email);
+        model.addAttribute("userDAO", userDAO);
         return "members/user";
     }
     
